@@ -1,6 +1,6 @@
 
 
-<p align="center"><img width="280" src="./front-end/static/img/timg.png"></a></p>
+<p align="center"><img width="180" src="./front-end/static/img/timg.png"></a></p>
 
 <p align="center">2020-2021_高级实践_大作业_图书管理系统</p>
 
