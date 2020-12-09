@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>108图书交易管理系统</title>
+    	<link rel='icon' th:href='@{/ico/bitbug_favicon.ico(1)}' type='image/x-ico' />
+</head>
+<body>
+    <h1>用户注册</h1>
+    <form th:action="@{/accounts/register}">
+        <label  class="sr-only">用户名</label>
+        <input type="text" name="id" class="form-control" th:placeholder="用户名">
+        <label  class="sr-only">密码</label>
+        <input type="text" name="password" id="form-control" th:placeholder="密码">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">注册</button>
+    </form>
+    
+</body>
+</html>

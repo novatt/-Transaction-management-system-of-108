@@ -2,20 +2,23 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>108图书交易管理系统</title>
+    	<link rel='icon' th:href='@{/ico/bitbug_favicon.ico(1)}' type='image/x-ico' />
+		<link rel='icon' th:href='@{/ico/book.ico}' type='image/x-ico' />
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<meta name="description" content="">
 		<meta name="author" content="">
-		<title>Signin Template for Bootstrap</title>
 		<!-- Bootstrap core CSS -->
 		<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
 		<!-- Custom styles for this template -->
 		<link th:href="@{/css/signin.css}" rel="stylesheet">
+		<link rel="@{/img/bootstrap-solid.svg}">
 	</head>
 
 	<body class="text-center">
 		<form class="form-signin" th:action="@{/accounts/login}">
 			<img class="mb-4" th:src="@{/img/bootstrap-solid.svg}" alt="" width="72" height="72">
-			<div>108宿舍为您提供最优质的图书选购服务!</div>
+			<div>108图书网为您提供最优质的图书选购服务!</div>
 			<h1 class="h3 mb-3 font-weight-normal">请登入</h1>
 			
 			<p style="color : red" th:text="${msg}"></p>
@@ -26,7 +29,7 @@
 			<input type="password"  name="password" class="form-control" th:placeholder="密码" required="">
 			<div class="checkbox mb-3">
 				<label>
-          <input type="checkbox" value="remember-me"> Remember me
+          <input type="checkbox" value="remember-me"> 记住我
         </label>
 			</div>
 			<button class="btn btn-lg btn-primary btn-block" type="submit">登入</button>

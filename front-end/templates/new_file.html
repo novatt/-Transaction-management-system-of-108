@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="utf-8">
+		<title>108图书交易管理系统</title>
+    	<link rel='icon' th:href='@{/ico/bitbug_favicon.ico(1)}' type='image/x-ico' />
+		<link rel="stylesheet" th:href="@{/css/new_file.css}"/>
+	</head>
+	<body>
+	<div class="haha">	
+		</div>
+		<div class="book" th:style="'background:url(' + @{/img/5.png} + ');'">
+			<div class="imgbook">
+			<a href=""></a><span>
+				<img th:src="@{/img/2.png}" />
+			</span></a>
+			</div>
+			<div class="person">
+				<form th:action="@{/accounts/detail}" method = "post">
+					<div>用户id
+						<input type="text" name="id" class="text1" th:value = "${session.id}" disabled>
+					</div>
+					<div>密码
+						<input type="text" name="password" class="text2" th:value = "${customer.password}"/>
+					</div>
+					<div>剩余积分
+						<input type="text" name="score_now" class="text3" th:value = "${customer.score}" disabled>
+					</div>
+					<div>默认收货地址
+						<input type="text" name="address" class="text4" th:value = "${customer.address}"/>
+					</div >
+					<div class="bt" align="center"><button type="submit" class="btn btn-success" v-on:click = "submit" style="border-radius: 8px; background: #656762; color: white; border-color: transparent;" >修改</button></div>
+				 </form>
+			</div>
+	
+		</div>
+		<div class="funtext">
+			如果您歪着脖子，书和流星雨就会正过来<br><div align=right>
+				--彩蛋
+			</div>
+			
+		</div>
+		<!-- 导入vue，开发环境版本 -->
+    	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js" th:inline="javascript"></script>
+
+    	<script th:inline="javascript">
+        // 创建vue实例
+        //<![CDATA[
+        var v = document.getElementById("myselect").value;
+        var app = new Vue({
+
+            //类选择器
+            el:".book",
+            
+            //数据对象
+            data:{
+                message:"110",
+                number:"1",
+                which:"1",
+                price:"",
+                middle:"",
+                discount:"",
+                id:"",
+                password:"",
+                score:"",
+                address:"",                
+            },
+            methods:{
+            	change:function(){
+           			this.middle = [[${customer}]];
+           			this.id = this.middle.id;
+           			this.address= this.middle.address;
+            	},
+            	submit:function(){
+            		alert("修改个人信息成功！");
+            	},
+            }
+            
+        })
+      //]]>
+    </script>
+    
+		<script th:inline="javascript">
+			function rand(m,n){
+				return Math.ceil(Math.random() * (n-m+1)) + m-1;
+			}
+			let num = 100;		
+			for(let i=0;i<num;i++){
+				const i = document.createElement('i');
+				i.style.height = rand(5,30) +'px';
+				let u = Math.random();
+				if(u<0.5){
+				i.style.left = rand(0,30) + 'vw';
+				}
+				else{
+				i.style.left = rand(60,100) + 'vw';
+				}
+				i.style.animationDuration = rand(5,30) /10 + 's';
+				document.querySelector('.haha').appendChild(i);}
+		</script>
+	</body>
+</html>
