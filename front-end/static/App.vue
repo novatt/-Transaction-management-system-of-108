@@ -1,17 +1,19 @@
 <template>
-  <div id="app">
-    <router-view/>
-  </div>
+	<router-view>
+	</router-view>
 </template>
 
-<script>
-export default {
-  name: 'app'
-}
-</script>
-
 <style>
-@import 'normalize.css/normalize.css';
-@import './style/index.css';
-@import './style/custom.css';
+	body {
+		margin: 0;
+	}
+	.container {
+		padding: 20px;
+	}
+	.el-row {
+		margin-bottom: 20px;
+	}
+	.el-card {
+		margin-top: 20px;
+	}
 </style>
