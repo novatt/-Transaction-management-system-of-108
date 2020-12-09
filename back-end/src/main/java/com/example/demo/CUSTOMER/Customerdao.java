@@ -45,14 +45,14 @@ public class Customerdao {
 	        return customer1;
 	    }
 	 
-	 public Customer updateCustomer_password_ById(int id , String password , Customer customer) throws Exception{//改密码
+	 public Customer updateCustomer_password_ById(int id  , Customer customer) throws Exception{//改密码
 	        String sql = "UPDATE customer set password=? WHERE id=?";
 	        jdbcTemplate.update(sql, customer.getPassword() , id);
 	        System.out.print("成功更新");
 	        return queryCustomerById(id);
 	 }
 	 
-	 public Customer updateCustomer_address_ById(int id , String password , Customer customer) throws Exception{//改地址
+	 public Customer updateCustomer_address_ById(int id , Customer customer) throws Exception{//改地址
 	        String sql = "UPDATE customer set address =? WHERE id=?";
 	        jdbcTemplate.update(sql , customer.getAddress() , id);
 	        System.out.print("成功更新");

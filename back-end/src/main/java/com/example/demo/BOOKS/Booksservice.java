@@ -17,16 +17,11 @@ public class Booksservice {
 	@Autowired
 	private Managerdao managerdao;
 	
-	public Manager addbooks(Books book , String id , String password) {
+	public Manager addbooks(Books book , String id) {
 		Manager manager1 = managerdao.queryManagerById(id);
 		Books book1 = booksdao.queryBookById(book.getId());
 		Manager manager_return = new Manager();
 		if(manager1 == null)
-		{
-			manager_return.setId("-1");
-			return manager_return;//身份验证失败
-		}
-		else if(!manager1.getPassword().equals(password))
 		{
 			manager_return.setId("-1");
 			return manager_return;//身份验证失败
@@ -73,54 +68,19 @@ public class Booksservice {
 		return booksdao.queryBooksByType(type);
 	}
 	
+	public List<Books> booksdetails_publisher(String publisher) {
+		return booksdao.queryBooksByPublisher(publisher);
+	}
+	
 	public List<Books> booksdetails_all() {
 		return booksdao.queryAllBooks();
 	}
 	
-	public Manager removebook(Books book , String id , String password) {
+	public Manager removebook(Books book , String id) {
 		Manager manager1 = managerdao.queryManagerById(id);
-		Books book1 = booksdao.queryBookById(book.getId());
-		Manager manager_return = new Manager();
-		if(manager1 == null)
-		{
-			manager_return.setId("-1");
-			return manager_return;//身份验证失败
-		}
-		else if(book1 == null)
-		{
-			manager_return.setId("-3");
-			return manager_return;//图书ID不存在
-		}
-		else if(!manager1.getPassword().equals(password))
-		{
-			manager_return.setId("-1");
-			return manager_return;//身份验证失败
-		}
-//		else if(manager1.getType().equals("M") )
-//		{
-//			manager_return.setId("-2");
-//			return manager_return;//无权限
-//		}
-		else if(manager1.getType().equals("P")  && !book1.getPublisher().equals(id))
-		{
-			manager_return.setId("-2");
-			return manager_return;//无权限
-		}
-		else if(manager1.getType().equals("P")  && manager1.getIf_identify() == 0)
-		{
-			manager_return.setId("-5");
-			return manager_return;//账号无效
-		}
-		else if((manager1.getType().equals("P")  && book.getPublisher().equals(id)) || manager1.getType().equals("M"))
-		{
-			booksdao.deleteBookById(book.getId());
-			return manager1;
-		}	
-		else
-		{
-			manager_return.setId("-4");
-			return manager_return;
-		}
+		booksdao.deleteBookById(book.getId());
+		return manager1;
+
 	}
 	
 	public Books changebooks_discount(Books book , String id , String password) {

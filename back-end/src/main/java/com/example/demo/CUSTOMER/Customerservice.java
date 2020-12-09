@@ -30,6 +30,11 @@ public class Customerservice {
 		}
 	}
 	
+	public Customer query(int id) throws Exception {
+		Customer customer1 = customerdao.queryCustomerById(id);
+		return customer1;		
+	}
+	
 	public Customer addcustomer(Customer customer) throws Exception {
 		Customer customer1 = customerdao.queryCustomerById(customer.getId());
 		Customer customer2 = new Customer();
@@ -42,7 +47,7 @@ public class Customerservice {
 		return customerdao.addcustomer(customer);
 	}
 	
-	public Customer updateCustomer_password_ById(Customer customer , int id , String password) throws Exception {
+	public Customer updateCustomer_password_ById(Customer customer , int id ) throws Exception {
 		Customer customer1 = customerdao.queryCustomerById(id);
 		Customer customer2 = new Customer();
 		customer2.setId(-2);
@@ -51,15 +56,15 @@ public class Customerservice {
 		{
 			return customer2;
 		}
-		else if(!customer1.getPassword().equals(password))
-		{
-			return customer3;
-		}
-		return customerdao.updateCustomer_password_ById(id , password , customer);
+//		else if(!customer1.getPassword().equals(password))
+//		{
+//			return customer3;
+//		}
+		return customerdao.updateCustomer_password_ById(id  , customer);
 		
 	}
 	
-	public Customer updateCustomer_address_ById(Customer customer , int id , String password) throws Exception {
+	public Customer updateCustomer_address_ById(Customer customer , int id) throws Exception {
 		Customer customer1 = customerdao.queryCustomerById(id);
 		Customer customer2 = new Customer();
 		customer2.setId(-2);
@@ -67,17 +72,13 @@ public class Customerservice {
 		if(customer1 == null)
 		{
 			return customer2;
-		}
-		else if(!customer1.getPassword().equals(password))
-		{
-			return customer3;
 		}
 		else if(customer.getAddress() == null)
 		{
 			customer2.setId(-3);
 			return customer2;//没填地址
 		}
-		return customerdao.updateCustomer_address_ById(id , password , customer);
+		return customerdao.updateCustomer_address_ById(id ,  customer);
 		
 	}
 }

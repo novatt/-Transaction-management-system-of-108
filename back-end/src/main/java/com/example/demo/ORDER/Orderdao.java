@@ -43,11 +43,53 @@ public class Orderdao {
 		}
     }
 	
+	public List<Order> queryallorder() {
+        String sql = "SELECT * FROM orders";
+        List<Order> orderList = jdbcTemplate.query(sql , new OrderRowMapper());
+        System.out.print("成功查询该用户所有订单");
+        return orderList;
+    }
+	
 	public List<Order> queryorder(int customer_id) {
         String sql = "SELECT * FROM orders WHERE customer_id=?";
         List<Order> orderList = jdbcTemplate.query(sql , new OrderRowMapper() , customer_id);
         System.out.print("成功查询该用户所有订单");
         return orderList;
+    }
+	
+	public List<Order> queryorder_buy(int customer_id) {
+        String sql = "SELECT * FROM orders WHERE customer_id=? and if_post = 0";
+        List<Order> orderList = jdbcTemplate.query(sql , new OrderRowMapper() , customer_id);
+        System.out.print("成功查询该用户待发货订单");
+        return orderList;
+    }
+	
+	public List<Order> queryorder_post(int customer_id) {
+        String sql = "SELECT * FROM orders WHERE customer_id=? and if_post = 1 and if_identify = 0 and if_return = 0";
+        List<Order> orderList = jdbcTemplate.query(sql , new OrderRowMapper() , customer_id);
+        System.out.print("成功查询该用户已发货订单");
+        return orderList;
+    }
+	
+	public List<Order> queryorder_return(int customer_id) {
+        String sql = "SELECT * FROM orders WHERE customer_id=? and if_post = 1 and if_return > 0";
+        List<Order> orderList = jdbcTemplate.query(sql , new OrderRowMapper() , customer_id);
+        System.out.println("成功查询该用户退货订单");
+        return orderList;
+    }
+	
+	public Order queryorder_return_byid(String order_id) {
+        String sql = "SELECT * FROM orders WHERE order_id=?";
+//        List<Order> orderList = jdbcTemplate.query(sql , new OrderRowMapper() , order_id);
+        Order order = new Order();
+        try {
+    		order = jdbcTemplate.queryForObject(sql, new OrderRowMapper() , order_id);
+    		System.out.print("成功查询订单");
+        	return order;
+		}catch(Exception e)
+		{
+			return null;
+		}
     }
 	
 	public List<Order> queryorder_publisher(String id) {
@@ -56,6 +98,8 @@ public class Orderdao {
         System.out.print("成功查询该用户所有订单");
         return orderList;
     }
+	
+	
 	
 	public List<Order> queryorder_oneday_in(String id ,String date) {
         String sql = "SELECT * FROM orders where book_id in (select id from book where publisher = ?) AND time = ? AND if_return = 0";
@@ -104,7 +148,7 @@ public class Orderdao {
         
           jdbcTemplate.update(sql ,"" + customer_id + shopcar.getBook_id() + (this.queryorder_in(customer_id, shopcar).size() + 1),
         		  customer_id , shopcar.getBook_id() , shopcar.getNumber() , shopcar.getSingle_price() , shopcar.getDiscount() 
-        		, shopcar.getSingle_price()*shopcar.getNumber() , shopcar.getSingle_price()*shopcar.getNumber()*(1 - shopcar.getDiscount()) - score
+        		, shopcar.getSingle_price()*shopcar.getNumber() , shopcar.getSingle_price()*shopcar.getNumber()*(shopcar.getDiscount()) - score
         		, 0 , 0 , 0 , 0 ,new Date(System.currentTimeMillis()).toString(), this.queryorder_in(customer_id, shopcar).size() + 1);
         return this.queryorder_in(customer_id, shopcar).size();
     }
@@ -131,5 +175,14 @@ public class Orderdao {
         String sql = "UPDATE orders set if_return = 2 where order_id = ?";
         jdbcTemplate.update(sql,  order_id);
         System.out.print("成功更新");
+    }
+	
+	//待评价的订单
+	public  List<Order> query_wait_review(int customer_id){
+	
+		String sql = "SELECT * FROM orders where if_identify = 1 AND customer_id = ?";
+        List<Order> orderList = jdbcTemplate.query(sql , new OrderRowMapper() , customer_id);
+        System.out.print("成功查询该用户所有订单");
+        return orderList;
     }
 }

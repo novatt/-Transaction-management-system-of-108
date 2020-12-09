@@ -1,23 +1,32 @@
 package com.example.demo.BOOKS;
 
+import java.sql.Date;
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.controller;
+import com.example.demo.info;
+import com.example.demo.infoservice;
 import com.example.demo.MANAGER.Manager;
 import com.example.demo.MANAGER.Managerservice;
 import com.example.demo.REVIEW.Review;
 import com.example.demo.REVIEW.Reviewservice;
+import com.example.demo.SHOPCAR.Shopcar;
 
 
-@RestController
+@Controller
 public class Bookscontroller {
 
 	@Autowired
@@ -29,14 +38,60 @@ public class Bookscontroller {
 	@Autowired
 	private Reviewservice reviewservice;
 	
+	@Autowired
+	private infoservice infos;
+	
 	@GetMapping("/books/allbooks")
-    List<Books> getAllBooks() {
-        return booksservice.booksdetails_all();
+    public String getAllBooks(Model model) {
+		Collection<Books> books = booksservice.booksdetails_all();
+		model.addAttribute("books", books);
+        return "list";
     }
 	
-	@GetMapping("/books/by_type")
-    List<Books> getBooks_type(@RequestParam(value = "type", defaultValue = "0") String type) {
-        return booksservice.booksdetails_type(type);
+	@GetMapping("/books/by_type/{id}")
+    public String getBooks_type(@PathVariable("id") int id , Model model) {
+        String type = "";
+        if(id == 1)
+        {
+        	type = "teaching";
+        }
+        else if(id == 2)
+        {
+        	type = "lol";
+        }
+        else if(id == 3)
+        {
+        	type = "dictionary";
+        }
+        else if(id == 4)
+        {
+        	type = "novel";
+        }
+        else if(id == 5)
+        {
+        	type = "magazine";
+        }
+        Collection<Books> books = booksservice.booksdetails_type(type);
+		model.addAttribute("books", books);
+        return "list";
+    }
+	
+	@GetMapping("/books/allbooks/{id}")
+    public String getBooks_detail(@PathVariable("id") String id , Model model) throws Exception {
+		Books book = booksservice.booksdetails_one(id);
+		Collection<Review> reviews = reviewservice.get_review(id);
+		model.addAttribute("book", book);
+		model.addAttribute("reviews", reviews);
+        return "book_detail_normal";
+    }
+	
+	@GetMapping("/book/allbooks/{id}")
+    public String getBook_detail(@PathVariable("id") String id , Model model) throws Exception {
+		Books book = booksservice.booksdetails_one(id);
+		Collection<Review> reviews = reviewservice.get_review(id);
+		model.addAttribute("book", book);
+		model.addAttribute("reviews", reviews);
+        return "book_detail";
     }
 	
 	@GetMapping("/books/by_id")
@@ -67,34 +122,26 @@ public class Bookscontroller {
         
     }
 	
+	@GetMapping("/books/adding")
+	public String toAddbook(Model model) {
+		return "publisher/add";
+	}
+	
 	@PostMapping("/books/adding")
-    public String addBook(@RequestBody Books book , @RequestParam(value = "id", defaultValue = "0") String id,
-			@RequestParam(value = "password", defaultValue = "0") String password) {
-            Manager manager = booksservice.addbooks(book , id , password);
-            if(manager.getId().equals("-1"))
-            {
-            	return "抱歉，身份认证失败~";
-            }
-            else if(manager.getId().equals("-3"))
-            {
-            	return "抱歉，该图书ID已经存在，请更换~";
-            }
-            else if(manager.getId().equals("-2"))
-            {
-            	return "抱歉，您无权限上架该图书~";
-            }
-            else if(manager.getId().equals("-5"))
-            {
-            	return "抱歉，您的账号当前为无效状态，修改失败~";
-            }
-			return "上架书籍成功！\n书目ID：" + book.getId() + 
-					"\n书目名字：" + book.getName() + 
-					"\n书目单价：" + book.getPrice() +
-					"\n书目折扣情况：" + book.getDiscount() +
-					"\n书目类型：" + book.getType() + 
-					"\n书目库存：" + book.getNumber() +
-					"\n书目出版社：" + book.getPublisher();
+    public String addbook(Books book) throws Exception {
+		booksservice.addbooks(book , controller.customer_id);
+		return "redirect:/books/allbooks";
     }
+	
+	//图书下架并更新通知
+	@PostMapping("/books/removal")
+	 public String deleteBook(Books book)throws Exception {
+		 System.out.println("内容为：" + book.getName());
+		 booksservice.removebook(book , controller.customer_id);
+		 info infor = new info(controller.customer_id,book.getPublisher(),book.getId(),book.getName(),new Date(System.currentTimeMillis()).toString());
+		 infos.infos_insert(infor);
+		 return "redirect:/books/allbooks";
+	 }
 	
 	@PutMapping("/books/changing/discount")
     public String updatebook_discount(@RequestBody Books book, @RequestParam(value = "id", defaultValue = "0") String id,
@@ -178,31 +225,5 @@ public class Bookscontroller {
 	 	}	 
  }
  
-	 @DeleteMapping("/books/removal")
-	 public String deleteBook(@RequestBody Books book , @RequestParam(value = "id", defaultValue = "0") String id,
-				@RequestParam(value = "password", defaultValue = "0") String password) {
-		 Manager manager1 = managerservice.if_manager(id, password);
-		 if(manager1.getId().equals("-1") || manager1.getId().equals("-2"))
-	     {
-	    	return "身份认证失败！";
-	     }
-		 Manager manager = booksservice.removebook(book , id , password);
-         if(manager.getId().equals("-1"))
-         {
-         	return "抱歉，身份认证失败~";
-         }
-         else if(manager.getId().equals("-3"))
-         {
-         	return "抱歉，该图书ID不存在，请更换~";
-         }
-         else if(manager.getId().equals("-2"))
-         {
-         	return "抱歉，您无权限下架该图书~";
-         }
-         else if(manager.getId().equals("-5"))
-         {
-         	return "抱歉，您的账号当前为无效状态，修改失败~";
-         }
-			return "成功下架ID为" + book.getId() + "的图书";
-	 }
+	 
 }

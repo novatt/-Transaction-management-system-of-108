@@ -22,6 +22,11 @@ public class Shopcarservice {
 		return shopcardao.queryorder(customer_id);	
 	}   
 	
+	public Shopcar get_one_order(int customer_id , String book_id)throws Exception {  
+		
+		return shopcardao.queryorderbybook_id(customer_id, book_id);
+	}   
+	
 	public Books addingorder(int customer_id , Shopcar shopcar) {
 		Shopcar order = shopcardao.queryorderbybook_id(customer_id, shopcar.getBook_id());
 		Books book = booksdao.queryBookById(shopcar.getBook_id());

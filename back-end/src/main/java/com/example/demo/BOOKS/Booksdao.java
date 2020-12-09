@@ -31,6 +31,13 @@ public class Booksdao {
 	        System.out.print("成功查询该种别所有书");
 	        return bookList;
 	    }
+	    
+	    public List<Books> queryBooksByPublisher(String publisher) {
+	        String sql = "SELECT * FROM book WHERE publisher=?";
+	        List<Books> bookList = jdbcTemplate.query(sql , new BooksRowMapper() , publisher);
+	        System.out.print("成功查询该出版社所有书");
+	        return bookList;
+	    }
 
 	    public List<Books> queryAllBooks() {
 	        String sql = "SELECT * FROM book";

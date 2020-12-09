@@ -43,10 +43,44 @@ public class Orderservice {
 		return orderdao.queryorder_period_in(id , date_start , date_end);	
 	}
 	
+	//管理员使用（全部订单）
+	public List<Order> get_all_order() throws Exception {  
+		
+		return orderdao.queryallorder();	
+	}
+	
+	//用户全部订单
 	public List<Order> get_order(int customer_id) throws Exception {  
 			
 		return orderdao.queryorder(customer_id);	
 	}
+	//用户待发货订单
+	public List<Order> get_order_buy(int customer_id) throws Exception {  
+				
+		return orderdao.queryorder_buy(customer_id);	
+	}
+	//用户已发货订单
+	public List<Order> get_order_post(int customer_id) throws Exception {  
+					
+		return orderdao.queryorder_post(customer_id);	
+	}
+	//用户已发货订单
+	public List<Order> get_order_return(int customer_id) throws Exception {  
+					
+		return orderdao.queryorder_return(customer_id);	
+	}
+	//根据号查订单
+	public Order get_order_byid(String order_id) throws Exception {  
+		
+		return orderdao.queryorderbyorder_id(order_id);	
+	}
+	//所有待评价订单
+		public List<Order> get_order_review(int customer_id) throws Exception {  
+			
+			return orderdao.query_wait_review(customer_id);
+		}
+	
+		
 	
 	public List<Order> get_order_publisher(String id) throws Exception {  
 		
@@ -133,73 +167,15 @@ public class Orderservice {
 	
 	public Order returnorder(String order_id) {
 		Order order = orderdao.queryorderbyorder_id(order_id);
-		Order order1 =  new Order();
-		if(order == null)//无订单
-		{
-			order1.setBook_id("-1");
-			return order1;
-		}
-		else if(order.getIf_post() == 0)//没发货
-		{
-			order1.setBook_id("-2");
-			return order1;
-		}
-		else if(order.getIf_identify() == 1)//已确认收货
-		{
-			order1.setBook_id("-3");
-			return order1;
-		}
-		else if(order.getIf_return() == 1)//已经提交退货申请
-		{
-			order1.setBook_id("-5");
-			return order1;
-		}
-		else if(order.getIf_return() == 2)//已经批准退货申请
-		{
-			order1.setBook_id("-6");
-			return order1;
-		}
-		else
-		{
-			orderdao.updateorder_return_ById(order_id);
-			return order;
-		}
+		orderdao.updateorder_return_ById(order_id);
+		return order;
 	}
 	
 	public Order returnorder_publisher(String id , String order_id) {
 		Order order = orderdao.queryorderbyorder_id(order_id);
-		Order order1 =  new Order();
-		if(order == null)//无订单
-		{
-			order1.setBook_id("-1");
-			return order1;
-		}
-		Books book = booksdao.queryBookById(order.getBook_id());
-		if(!book.getPublisher().equals(id))//无权限
-		{
-			order1.setBook_id("-2");
-			return order1;
-		}
-		else if(order.getIf_return() == 0)//没有退货请求
-		{
-			order1.setBook_id("-4");
-			return order1;
-		}
-		else if(order.getIf_identify() == 1)//已确认收货
-		{
-			order1.setBook_id("-3");
-			return order1;
-		}
-		else if(order.getIf_return() == 2)
-		{
-			order1.setBook_id("-5");
-			return order1;
-		}
-		else
-		{
-			orderdao.updateorder_return_publisher_ById(order_id);
+		
+		orderdao.updateorder_return_publisher_ById(order_id);
 			return order;
-		}
 	}
 	
 	public Order postorder(String id , String order_id) {
