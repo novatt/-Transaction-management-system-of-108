@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)http://getbootstrap.com/docs/4.0/examples/dashboard/ -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<title>108图书交易管理系统</title>
+    	<link rel='icon' th:href='@{/ico/bitbug_favicon.ico(1)}' type='image/x-ico' />
+		<!-- Bootstrap core CSS -->
+		<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+
+		<!-- Custom styles for this template -->
+		<link th:href="@{/css/dashboard.css}" rel="stylesheet">
+		<style type="text/css">
+			/* Chart.js */
+			
+			@-webkit-keyframes chartjs-render-animation {
+				from {
+					opacity: 0.99
+				}
+				to {
+					opacity: 1
+				}
+			}
+			
+			@keyframes chartjs-render-animation {
+				from {
+					opacity: 0.99
+				}
+				to {
+					opacity: 1
+				}
+			}
+			
+			.chartjs-render-monitor {
+				-webkit-animation: chartjs-render-animation 0.001s;
+				animation: chartjs-render-animation 0.001s;
+			}
+		</style>
+	</head>
+
+	<body>
+		
+		<div th:replace="~{common::topside}"></div>
+
+		<div class="container-fluid">
+			<div class="row">
+			
+				<div th:replace="~{common::leftside(active='order/post_list.html')}"></div>
+
+				<div style="margin:0 auto; width:1000px; height:800px; border:1px solid #ccc;">
+	<!-- 折线图绘制 -->
+	<canvas id="myCanvas" width="1000" height="800"></canvas>
+</div>
+<div style="margin:0 auto; width:1000px; height:800px; border:1px solid #ccc;">
+	<canvas id="myCanvas2" width="1000" height="800"></canvas>
+</div>
+
+
+<script type="text/javascript" th:inline="javascript">
+//<![CDATA[
+var colorArr = ["#789", "#abcdef", "#cff", "#9cf", "#99f", "#90f", "#3ff", "#009", "#606", "#f69", "#c66", "#963", "#c9c", "#360", "#693", "#036"];
+
+// 折线图
+function LineChart(data){
+	var XNumber = data.datasets[0].data.length;	// X轴的点数（竖线的个数）
+	var canvas = document.getElementById("myCanvas");
+	var height = data.height/13;
+	var ctx = canvas.getContext("2d"); 
+	ctx.strokeStyle="#f3f3f3";
+	
+	//	绘制竖线（竖线个数等于数据的个数）
+	for (var i=0; i<XNumber; i++){
+		var w = (800/XNumber) * i + 180;
+		ctx.moveTo(w,50);
+		ctx.lineTo(w,700);
+		ctx.textAlign = "center";
+		ctx.fillText(data.labels[i],w,720);
+	}
+	
+	//	绘制横线
+	for (var i=14; i>0; i--){
+		ctx.moveTo(180,50*i);
+		ctx.lineTo(180+ 800/XNumber*(XNumber-1),50*i);
+		ctx.textAlign = "right";
+		ctx.fillText(Math.floor((14-i)*height),175,50*i+3);
+	}
+	ctx.stroke();
+	
+	
+	// 绘制折线并添加数据
+	for (var i=0; i<data.datasets.length; i++){
+		ctx.beginPath();
+		ctx.strokeStyle = colorArr[i];
+		for (var j=0; j<XNumber; j++){
+			var w = (800/XNumber) * j + 180;
+			
+			// 绘制折线
+			if (j == 0){
+				ctx.moveTo(w, Math.floor(700-650/data.height*data.datasets[i].data[j]));
+			}else{
+				ctx.lineTo(w, Math.floor(700-650/data.height*data.datasets[i].data[j]));
+			}
+			ctx.textAlign = "left";
+			ctx.fillStyle = "#f00";
+			
+			// 添加数据
+			ctx.fillText(data.datasets[i].data[j], w, Math.floor(700-650/data.height*data.datasets[i].data[j]));
+		}
+		
+		ctx.fillStyle = "#000";
+		ctx.fillText(data.datasets[i].title, (800/XNumber) * (XNumber-1) + 200, Math.floor(700-650/data.height*data.datasets[i].data[XNumber-1]));
+		ctx.stroke();
+	}
+	
+	
+	
+	
+}
+var v = [[${result}]];
+var lineData = {
+	labels : ["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"],
+	datasets : [
+		{
+			title: "2020",
+			data : v
+		},
+		/* {
+			title: "2017年",
+			data : [28,48,40,19,96,27,100]
+		} */
+	],
+	height: 120
+};
+LineChart(lineData)
+BarChart(lineData); 
+
+
+
+
+// 柱状图
+function BarChart(data){
+	var XNumber = data.datasets[0].data.length+1;	// X轴的点数（竖线的个数）
+	var canvas = document.getElementById("myCanvas2");
+	var height = data.height/13;
+	var ctx = canvas.getContext("2d"); 
+	ctx.strokeStyle="#f3f3f3";
+	
+	//	绘制竖线（竖线个数等于数据的个数）
+	for (var i=0; i<XNumber; i++){
+		var w = (800/XNumber) * i + 180;
+		ctx.moveTo(w,50);
+		ctx.lineTo(w,700);
+		if (i != 0){
+			ctx.textAlign = "center";
+			ctx.fillText(data.labels[i-1],w-(400/XNumber),720);
+		}
+	}
+	
+	//	绘制横线
+	for (var i=14; i>0; i--){
+		ctx.moveTo(180,50*i);
+		ctx.lineTo(180+800/XNumber*(XNumber-1),50*i);
+		ctx.textAlign = "right";
+		ctx.fillText(Math.floor((14-i)*height),175,50*i+3);
+	}
+	
+	ctx.stroke();
+	
+	// 绘制柱状图并添加数据
+	for (var i=0; i<data.datasets.length; i++){
+		ctx.beginPath();
+		ctx.fillStyle = colorArr[i];
+		for (var j=0; j<XNumber; j++){
+			var RectWidth = 800/XNumber/(data.datasets.length+1);	//	矩形的宽度
+			
+			var w = (800/XNumber) * j + 180;
+			// 矩形的Y轴
+			var h = Math.floor(700-650/data.height*data.datasets[i].data[j]); 
+			
+			// 绘制折线
+			ctx.textAlign = "center";
+			
+			ctx.fillRect(w+RectWidth*0.5+RectWidth*i, h, RectWidth, 700-h);
+			
+			// 添加数据
+			ctx.fillText(data.datasets[i].data[j], w+RectWidth*(i+1), h-3);
+		}
+		
+	}
+	
+	
+	ctx.stroke();
+} 
+//]]>
+</script>
+
+	</body>
+
+</html>
